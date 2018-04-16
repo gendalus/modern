@@ -139,7 +139,7 @@ class Modern_Assets {
 				}
 
 				$register_assets = array(
-					'modern-google-fonts'      => array( self::google_fonts_url() ),
+					'modern-fonts'      => array( 'src' => get_theme_file_uri( 'assets/css/fira-sans.css' ) ),
 					'modern-stylesheet-global' => array( 'src' => Modern_Library::fix_ssl_urls( $stylesheets['global'] ), 'ver' => $stylesheet_global_version ),
 				);
 
@@ -248,11 +248,9 @@ class Modern_Assets {
 
 					}
 
-				// Google Fonts
+				// Fonts
 
-					if ( self::google_fonts_url() ) {
-						$enqueue_assets[5] = 'modern-google-fonts';
-					}
+					$enqueue_assets[5] = 'modern-fonts';
 
 				// Main
 

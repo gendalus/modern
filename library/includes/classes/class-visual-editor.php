@@ -5,11 +5,14 @@
  * This is a helper class and does not load automatically with the library.
  * Load it directly from within your theme's `functions.php` file.
  *
- * @package     WebMan WordPress Theme Framework
  * @subpackage  Visual Editor
  *
+ * @package    WebMan WordPress Theme Framework
+ * @copyright  WebMan Design, Oliver Juhas
+ *
  * @since    1.0.0
- * @version  2.6.0
+ * @version  2.7.0
+ * @version  2.2.3
  *
  * Contents:
  *
@@ -36,21 +39,13 @@ final class Modern_Library_Visual_Editor {
 		 * Constructor
 		 *
 		 * @since    1.0.0
-		 * @version  2.6.0
+		 * @version  2.7.0
 		 */
 		private function __construct() {
 
 			// Processing
 
 				// Hooks
-
-					// Actions
-
-						// Editor body class on page template change
-
-							if ( is_admin() ) {
-								add_action( 'admin_enqueue_scripts', __CLASS__ . '::scripts_post_edit', 1000 );
-							}
 
 					// Filters
 
@@ -62,8 +57,7 @@ final class Modern_Library_Visual_Editor {
 
 						// Editor addons
 
-							add_filter( 'mce_buttons', __CLASS__ . '::add_buttons_row1' );
-
+							add_filter( 'mce_buttons',   __CLASS__ . '::add_buttons_row1' );
 							add_filter( 'mce_buttons_2', __CLASS__ . '::add_buttons_row2' );
 
 							add_filter( 'tiny_mce_before_init', __CLASS__ . '::style_formats' );
@@ -107,20 +101,11 @@ final class Modern_Library_Visual_Editor {
 		 * First row.
 		 *
 		 * @since    1.0.0
-		 * @version  2.0.0
+		 * @version  2.7.0
 		 *
 		 * @param  array $buttons
 		 */
 		public static function add_buttons_row1( $buttons ) {
-
-			// Pre
-
-				$pre = apply_filters( 'wmhook_modern_library_editor_add_buttons_row1_pre', false, $buttons );
-
-				if ( false !== $pre ) {
-					return $pre;
-				}
-
 
 			// Processing
 
@@ -149,20 +134,11 @@ final class Modern_Library_Visual_Editor {
 		 * Second row.
 		 *
 		 * @since    1.0.0
-		 * @version  2.0.0
+		 * @version  2.7.0
 		 *
 		 * @param  array $buttons
 		 */
 		public static function add_buttons_row2( $buttons ) {
-
-			// Pre
-
-				$pre = apply_filters( 'wmhook_modern_library_editor_add_buttons_row2_pre', false, $buttons );
-
-				if ( false !== $pre ) {
-					return $pre;
-				}
-
 
 			// Processing
 
@@ -192,20 +168,11 @@ final class Modern_Library_Visual_Editor {
 		 * @link  http://www.tinymce.com/wiki.php/Configuration:style_formats
 		 *
 		 * @since    1.0.0
-		 * @version  2.6.0
+		 * @version  2.7.0
 		 *
 		 * @param  array $init
 		 */
 		public static function style_formats( $init ) {
-
-			// Pre
-
-				$pre = apply_filters( 'wmhook_modern_library_editor_style_formats_pre', false, $init );
-
-				if ( false !== $pre ) {
-					return $pre;
-				}
-
 
 			// Processing
 
@@ -392,7 +359,8 @@ final class Modern_Library_Visual_Editor {
 		 * Adding editor HTML body classes
 		 *
 		 * @since    1.7.2
-		 * @version  2.0.1
+		 * @version  2.7.0
+		 * @version  2.2.3
 		 *
 		 * @param  array $init
 		 */
@@ -400,42 +368,15 @@ final class Modern_Library_Visual_Editor {
 
 			// Requirements check
 
-				global $post;
-
-				if ( ! isset( $post ) ) {
+				if ( ! isset( $init['body_class'] ) ) {
 					return $init;
 				}
 
 
-			// Helper variables
-
-				global $wp_version;
-
-				$class = array();
-
-
 			// Processing
 
-				// Setting custom classes
-
-					// Adding `.entry-content` class for compatibility with `main.css` styles
-
-						$class[] = 'entry-content';
-
-					// Page template class
-
-						if ( version_compare( $wp_version, '4.7', '<' ) ) {
-
-							if ( $page_template = get_page_template_slug( $post ) ) {
-								$page_template = str_replace( '.', '-', basename( $page_template, '.php' ) );
-								$class[]       = 'page-template-' . sanitize_html_class( $page_template );
-							}
-
-						}
-
-				// Adding custom classes
-
-					$init['body_class'] = $init['body_class'] . ' ' . implode( ' ', $class );
+				// Compatibility with `main.css` styles.
+				$init['body_class'] .= ' entry-content '; // TinyMCE only.
 
 
 			// Output
@@ -443,49 +384,6 @@ final class Modern_Library_Visual_Editor {
 				return $init;
 
 		} // /body_class
-
-
-
-		/**
-		 * Adding scripts to post edit screen
-		 *
-		 * @since    1.7.2
-		 * @version  2.6.0
-		 *
-		 * @param  string $hook_suffix
-		 */
-		public static function scripts_post_edit( $hook_suffix = '' ) {
-
-			// Helper variables
-
-				global $wp_version;
-
-				$current_screen = get_current_screen();
-
-
-			// Requirements check
-
-				if (
-					version_compare( $wp_version, '4.7', '>=' )
-					|| ( isset( $current_screen->base ) && 'post' != $current_screen->base )
-				) {
-					return;
-				}
-
-
-			// Processing
-
-				// Scripts
-
-					wp_enqueue_script(
-							'modern-post-edit',
-							get_theme_file_uri( MODERN_LIBRARY_DIR . 'js/post.js' ),
-							array( 'jquery' ),
-							esc_attr( MODERN_THEME_VERSION ),
-							true
-						);
-
-		} // /scripts_post_edit
 
 
 

@@ -6,7 +6,7 @@
  * @copyright  WebMan Design, Oliver Juhas
  *
  * @since    2.0.0
- * @version  2.0.0
+ * @version  2.3.0
  *
  * Contents:
  *
@@ -34,7 +34,7 @@ class Modern_Assets {
 		 * Constructor
 		 *
 		 * @since    2.0.0
-		 * @version  2.0.0
+		 * @version  2.2.0
 		 */
 		private function __construct() {
 
@@ -44,10 +44,12 @@ class Modern_Assets {
 
 					// Actions
 
+						add_action( 'wp_enqueue_scripts', __CLASS__ . '::register_inline_styles', 0 );
 						add_action( 'wp_enqueue_scripts', __CLASS__ . '::register_styles' );
 						add_action( 'wp_enqueue_scripts', __CLASS__ . '::register_scripts' );
 
 						add_action( 'wp_enqueue_scripts', __CLASS__ . '::enqueue_styles', 100 );
+						add_action( 'wp_enqueue_scripts', __CLASS__ . '::enqueue_inline_styles', 105 );
 						add_action( 'wp_enqueue_scripts', __CLASS__ . '::enqueue_theme_stylesheet', 110 );
 						add_action( 'wp_enqueue_scripts', __CLASS__ . '::enqueue_scripts', 100 );
 
@@ -107,43 +109,20 @@ class Modern_Assets {
 		 * Registering theme styles
 		 *
 		 * @since    1.0.0
-		 * @version  2.0.0
+		 * @version  2.3.0
 		 */
 		public static function register_styles() {
 
 			// Helper variables
 
-				$stylesheet_global_version = '';
-
-				if ( current_theme_supports( 'stylesheet-generator' ) ) {
-
-					$wp_upload_dir             = wp_upload_dir();
-					$theme_upload_dir          = trailingslashit( $wp_upload_dir['basedir'] . get_theme_mod( '__path_theme_generated_files' ) );
-					$dev_prefix                = ( defined( 'WP_DEBUG' ) && WP_DEBUG ) ? ( 'dev-' ) : ( '' );
-					$stylesheet_global_version = get_theme_mod( '__stylesheet_timestamp' );
-
-					$stylesheets = array(
-						'global' => ( ! file_exists( $theme_upload_dir . 'modern-styles.css' ) ) ? ( get_theme_file_uri( 'fallback.css' ) ) : ( str_replace( 'modern-styles', $dev_prefix . 'modern-styles', get_theme_mod( '__url_css' ) ) ),
-					);
-
-				} else {
-
-					$stylesheets = array(
-						'global' => get_theme_file_uri( 'assets/css/main.css' ),
-					);
-
-				}
-
-				if ( empty( $stylesheet_global_version ) ) {
-					$stylesheet_global_version = MODERN_THEME_VERSION;
-				}
-
 				$register_assets = array(
-					'modern-fonts'      => array( 'src' => get_theme_file_uri( 'assets/css/fira-sans.css' ) ),
-					'modern-stylesheet-global' => array( 'src' => Modern_Library::fix_ssl_urls( $stylesheets['global'] ), 'ver' => $stylesheet_global_version ),
+					'genericons-neue'          => array( 'src' => get_theme_file_uri( 'assets/fonts/genericons-neue/genericons-neue.css' ) ),
+					'modern-google-fonts'      => array( 'src' => self::google_fonts_url() ),
+					'modern-stylesheet-custom' => array( 'src' => get_theme_file_uri( 'assets/css/custom-styles.css' ) ),
+					'modern-stylesheet-global' => array( 'src' => get_theme_file_uri( 'assets/css/main.css' ) ),
 				);
 
-				$register_assets = (array) apply_filters( 'wmhook_modern_assets_register_styles', $register_assets, $stylesheets );
+				$register_assets = (array) apply_filters( 'wmhook_modern_assets_register_styles', $register_assets );
 
 
 			// Processing
@@ -216,7 +195,7 @@ class Modern_Assets {
 		 * Frontend styles enqueue
 		 *
 		 * @since    1.0.0
-		 * @version  2.0.0
+		 * @version  2.3.0
 		 */
 		public static function enqueue_styles() {
 
@@ -227,42 +206,23 @@ class Modern_Assets {
 
 			// Processing
 
-				// SASS debugging - enqueue default (fallback) stylesheet
+				// Google Fonts
+				if ( self::google_fonts_url() ) {
+					$enqueue_assets[0] = 'modern-google-fonts';
+				}
 
-					if (
-						defined( 'MODERN_DEBUG_SASS' )
-						&& MODERN_DEBUG_SASS
-						&& current_theme_supports( 'stylesheet-generator' )
-					) {
-
-						// We must deregister first to register again with the new URL.
-						wp_deregister_style( 'modern-stylesheet-global' );
-
-						wp_register_style(
-							'modern-stylesheet-global',
-							get_theme_file_uri( 'fallback.css' ),
-							false,
-							esc_attr( trim( MODERN_THEME_VERSION ) ),
-							'screen'
-						);
-
-					}
-
-				// Fonts
-
-					$enqueue_assets[5] = 'modern-fonts';
+				// Genericons Neue
+				$enqueue_assets[5] = 'genericons-neue';
 
 				// Main
+				$enqueue_assets[10] = 'modern-stylesheet-global';
+				wp_style_add_data( 'modern-stylesheet-global', 'rtl', 'replace' );
 
-					$enqueue_assets[10] = 'modern-stylesheet-global';
+				// Custom
+				$enqueue_assets[20] = 'modern-stylesheet-custom';
 
 				// Filter enqueue array
-
-					$enqueue_assets = (array) apply_filters( 'wmhook_modern_assets_enqueue_styles', $enqueue_assets );
-
-				// RTL setup
-
-					wp_style_add_data( 'modern-stylesheet-global', 'rtl', 'replace' );
+				$enqueue_assets = (array) apply_filters( 'wmhook_modern_assets_enqueue_styles', $enqueue_assets );
 
 				// Enqueue
 
@@ -280,7 +240,7 @@ class Modern_Assets {
 		 * Frontend scripts enqueue
 		 *
 		 * @since    1.0.0
-		 * @version  2.0.0
+		 * @version  2.2.0
 		 */
 		public static function enqueue_scripts() {
 
@@ -315,14 +275,20 @@ class Modern_Assets {
 					if ( ! apply_filters( 'wmhook_modern_disable_header', false ) ) {
 						$enqueue_assets[20] = 'modern-scripts-nav-a11y';
 
-						if ( get_theme_mod( 'navigation_mobile', true ) ) {
+						if ( Modern_Library_Customize::get_theme_mod( 'navigation_mobile' ) ) {
 							$enqueue_assets[25] = 'modern-scripts-nav-mobile';
 						}
 					}
 
 				// Masonry
 
-					if ( in_array( 'has-masonry-footer', $body_classes ) ) {
+					if (
+						in_array( 'has-masonry-footer', $body_classes )
+						|| (
+							in_array( 'has-posts-layout-masonry', $body_classes )
+							&& ( ! is_singular() || is_page_template( 'page-template/_front.php' ) )
+						)
+					) {
 						$enqueue_assets[40] = 'modern-scripts-masonry';
 					}
 
@@ -334,6 +300,7 @@ class Modern_Assets {
 						// For gallery post format slideshow
 						|| (
 							in_array( 'gallery', $supported_post_formats )
+							&& ! in_array( 'has-posts-layout-masonry', $body_classes )
 							&& (
 								is_home()
 								|| is_archive()
@@ -401,6 +368,43 @@ class Modern_Assets {
 				}
 
 		} // /enqueue_theme_stylesheet
+
+
+
+		/**
+		 * Placeholder for adding inline styles: register.
+		 *
+		 * This should be loaded after all of the theme stylesheets are enqueued,
+		 * and before the child theme stylesheet is enqueued.
+		 * Use the `modern` handle in `wp_add_inline_style`.
+		 * Early registration is required!
+		 *
+		 * @since    2.2.0
+		 * @version  2.2.0
+		 */
+		public static function register_inline_styles() {
+
+			// Processing
+
+				wp_register_style( 'modern', '' );
+
+		} // /register_inline_styles
+
+
+
+		/**
+		 * Placeholder for adding inline styles: enqueue.
+		 *
+		 * @since    2.2.0
+		 * @version  2.2.0
+		 */
+		public static function enqueue_inline_styles() {
+
+			// Processing
+
+				wp_enqueue_style( 'modern' );
+
+		} // /enqueue_inline_styles
 
 
 
@@ -549,7 +553,7 @@ class Modern_Assets {
 		 * https://fonts.googleapis.com/css?family=Alegreya+Sans:300,400|Exo+2:400,700|Allan&subset=latin,latin-ext
 		 *
 		 * @since    1.0.0
-		 * @version  2.0.0
+		 * @version  2.3.0
 		 *
 		 * @param  array $fonts Fallback fonts.
 		 */
@@ -577,6 +581,8 @@ class Modern_Assets {
 					$fonts_setup = (array) $fonts;
 				}
 
+				$http = ( is_ssl() ) ? ( 'https' ) : ( 'http' );
+
 
 			// Requirements check
 
@@ -588,26 +594,26 @@ class Modern_Assets {
 			// Processing
 
 				foreach ( $fonts_setup as $section ) {
-
 					$font = trim( $section );
 
 					if ( $font ) {
 						$family[] = str_replace( ' ', '+', $font );
 					}
-
-				} // /foreach
+				}
 
 				if ( ! empty( $family ) ) {
-
-					$output = esc_url_raw( add_query_arg( array( // Use `esc_url_raw()` for HTTP requests.
+					$output = esc_url_raw( add_query_arg(
+						array(
 							'family' => implode( '|', (array) array_unique( $family ) ),
 							'subset' => implode( ',', (array) $subset ), // Subset can be array if multiselect Customizer input field used
-						), 'https://fonts.googleapis.com/css' ) );
-
+						),
+						$http . '://fonts.googleapis.com/css'
+					) );
 				}
 
 
 			// Output
+				$output = get_theme_file_uri( 'assets/css/fira-sans.css?ver=2.1.0' );
 
 				return $output;
 
@@ -625,13 +631,13 @@ class Modern_Assets {
 		 * Editor stylesheets array
 		 *
 		 * @since    2.0.0
-		 * @version  2.0.0
+		 * @version  2.3.0
 		 */
 		public static function editor_stylesheets() {
 
 			// Helper variables
 
-				$stylesheet_suffix = '-editor';
+				$stylesheet_suffix = '';
 				if ( is_rtl() ) {
 					$stylesheet_suffix .= '-rtl';
 				}
@@ -643,58 +649,31 @@ class Modern_Assets {
 
 				// Google Fonts stylesheet
 
-					$visual_editor_stylesheets[5] = str_replace( ',', '%2C', self::google_fonts_url() );
+					$visual_editor_stylesheets[0] = str_replace( ',', '%2C', self::google_fonts_url() );
+
+				// Genericons Neue
+
+					$content_editor_stylesheets[5] = get_theme_file_uri( 'assets/fonts/genericons-neue/genericons-neue.css' );
 
 				// Editor stylesheet
 
-					if ( current_theme_supports( 'stylesheet-generator' ) ) {
+					$visual_editor_stylesheets[10] = esc_url_raw( add_query_arg(
+						'ver',
+						MODERN_THEME_VERSION,
+						get_theme_file_uri( 'assets/css/main' . $stylesheet_suffix . '.css' )
+					) );
 
-						$wp_upload_dir    = wp_upload_dir();
-						$theme_upload_dir = trailingslashit( $wp_upload_dir['basedir'] . get_theme_mod( '__path_theme_generated_files' ) );
+					$visual_editor_stylesheets[15] = esc_url_raw( add_query_arg(
+						'ver',
+						MODERN_THEME_VERSION,
+						get_theme_file_uri( 'assets/css/editor-style' . $stylesheet_suffix . '.css' )
+					) );
 
-						if ( file_exists( $theme_upload_dir . 'modern-styles' . $stylesheet_suffix . '.css' ) ) {
-
-							$dev_prefix = ( defined( 'WP_DEBUG' ) && WP_DEBUG ) ? ( 'dev-' ) : ( '' );
-
-							$visual_editor_stylesheets[10] = esc_url_raw( add_query_arg(
-								'ver',
-								get_theme_mod( '__stylesheet_timestamp' ),
-								Modern_Library::fix_ssl_urls( str_replace(
-									'modern-styles',
-									$dev_prefix . 'modern-styles',
-									get_theme_mod( '__url_css' . $stylesheet_suffix )
-								) )
-							) );
-
-						}
-
-					}
-
-					/**
-					 * If we don't have generated editor stylesheet enqueued yet, load a fallback stylesheets.
-					 *
-					 * In Modern_Customize_Styles::editor_stylesheet() the fallback custom styles stylesheet
-					 * will be overridden if the theme does not support `stylesheet-generator`.
-					 */
-					if ( ! isset( $visual_editor_stylesheets[10] ) ) {
-
-						$visual_editor_stylesheets[10] = esc_url_raw( add_query_arg(
-							'ver',
-							MODERN_THEME_VERSION,
-							get_theme_file_uri( 'assets/css/editor-style' . str_replace(
-								'-editor',
-								'',
-								$stylesheet_suffix
-							) . '.css' )
-						) );
-
-						$visual_editor_stylesheets[20] = esc_url_raw( add_query_arg(
-							'ver',
-							MODERN_THEME_VERSION,
-							get_theme_file_uri( 'assets/css/custom-styles-editor.css' )
-						) );
-
-					}
+					$visual_editor_stylesheets[20] = esc_url_raw( add_query_arg(
+						'ver',
+						MODERN_THEME_VERSION,
+						get_theme_file_uri( 'assets/css/custom-styles-editor.css' )
+					) );
 
 				// Filter and order
 

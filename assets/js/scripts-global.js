@@ -5,7 +5,7 @@
  * @copyright  WebMan Design, Oliver Juhas
  *
  * @since    1.0.0
- * @version  2.0.0
+ * @version  2.3.0
  *
  * Contents:
  *
@@ -18,6 +18,8 @@
 
 
 ( function( $ ) {
+
+	'use strict';
 
 
 
@@ -61,12 +63,19 @@
 
 						// Processing
 
-							e.preventDefault();
-
+							// Scroll the page to top.
 							$( 'html, body' )
 								.animate( {
 									scrollTop : 0
 								}, 600 );
+
+							// Reset focus on top of the page.
+							$( 'body' )
+								.attr( 'tabindex', 0 )
+								.focus();
+
+							// Do not alter URL in browser.
+							return false;
 
 					} );
 

@@ -6,7 +6,7 @@
  * @copyright  WebMan Design, Oliver Juhas
  *
  * @since    2.0.0
- * @version  2.1.0
+ * @version  2.2.0
  */
 
 
@@ -15,7 +15,7 @@
 
 // Helper variables
 
-	$site_info_text = trim( (string) get_theme_mod( 'texts_site_info' ) );
+	$site_info_text = trim( (string) Modern_Library_Customize::get_theme_mod( 'texts_site_info' ) );
 
 
 // Requirements check
@@ -62,7 +62,7 @@
 			<?php else :
 
 				// No need to apply wp_kses_post() on output as it is already validated via Customizer.
-				echo $site_info_text;
+				echo $site_info_text; // WPCS: XSS OK.
 
 			endif; ?>
 		</div>

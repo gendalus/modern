@@ -1,5 +1,179 @@
 # Modern Changelog
 
+## 2.3.1
+
+* **Update**: Removing obsolete files (related to v2.0.0 upgrade notices)
+* **Update**: Localization
+
+### Files changed:
+
+	changelog.md
+	readme.txt
+	style.css
+	languages/*.*
+	removing template-parts/admin/notice-upgrade-2.0.0.php
+	removing template-parts/admin/notice-upgrade-child-theme-2.0.0.php
+
+
+## 2.3.0
+
+* **Update**: Support URL
+* **Update**: Improving code
+* **Update**: Improving security
+* **Update**: Improving accessibility
+* **Update**: Adding WPCS comments to code
+* **Update**: Improving customizer functionality
+* **Update**: Using CSS variables instead of generating customized styles
+* **Update**: Removing obsolete functionality
+* **Update**: Updating readme file
+* **Update**: Setting `use strict` in JavaScript
+* **Update**: Removing all `locate_template()` function references
+* **Update**: Localization
+* **Update**: Documentation
+* **Update**: Removing old theme v2.0.0 upgrade notices and code (to update from pre v2.0.0 to v2.3.0, user need to install v2.0.0 first)
+* **Fix**: Styling issues
+
+### Files changed:
+
+	changelog.md
+	readme.txt
+	style.css
+	assets/js/customize-preview.js
+	assets/js/scripts-global.js
+	assets/js/scripts-navigation-accessibility.js
+	assets/js/scripts-navigation-mobile.js
+	assets/js/skip-link-focus-fix.js
+	assets/scss/_css-vars.scss
+	assets/scss/_setup.scss
+	assets/scss/custom-styles-editor.scss
+	assets/scss/custom-styles.scss
+	assets/scss/main.scss
+	includes/customize/class-customize-styles.php
+	includes/customize/class-customize.php
+	includes/frontend/class-assets.php
+	includes/frontend/class-loop.php
+	includes/frontend/class-menu.php
+	includes/frontend/class-post-media.php
+	includes/frontend/class-post.php
+	includes/post-formats/class-post-formats.php
+	includes/setup/class-setup.php
+	languages/*.*
+	library/changelog.md
+	library/init.php
+	library/includes/classes/class-admin.php
+	library/includes/classes/class-core.php
+	library/includes/classes/class-css-variables.php
+	library/includes/classes/class-customize-control-html.php
+	library/includes/classes/class-customize-control-multiselect.php
+	library/includes/classes/class-customize-control-radio-matrix.php
+	library/includes/classes/class-customize-control-select.php
+	library/includes/classes/class-customize.php
+	library/includes/classes/class-sanitize.php
+	library/js/customize-control-multicheckbox.js
+	library/js/customize-control-radio-matrix.js
+	library/js/customize-controls.js
+	template-parts/admin/welcome-header.php
+	template-parts/admin/welcome-quickstart.php
+
+
+## 2.2.3
+
+* **Add**: More social icons
+* **Update**: WordPress 5.0 ready
+* **Update**: Loading Genericons Neue as separate stylesheet
+* **Update**: Advanced Custom Fields plugin compatibility
+* **Fix**: Making social icons menu multilingual ready
+* **Fix**: Blog homepage intro text accepting empty value
+
+### Files changed:
+
+	changelog.md
+	functions.php
+	style.css
+	assets/fonts/genericons-neue/*.*
+	assets/images/svg/social-icons.svg
+	assets/js/scripts-slick.js
+	assets/scss/main.scss
+	includes/frontend/class-assets.php
+	includes/frontend/class-menu.php
+	includes/frontend/class-svg.php
+	includes/plugins/advanced-custom-fields/advanced-custom-fields.php
+	includes/plugins/advanced-custom-fields/class-advanced-custom-fields.php
+	includes/tgmpa/class-tgmpa-plugins.php
+	library/includes/classes/class-visual-editor.php
+	template-parts/intro/intro-content.php
+	template-parts/menu/menu-social.php
+
+
+## 2.2.2
+
+* **Fix**: Theme options sanitization
+
+### Files changed:
+
+	changelog.md
+	style.css
+	includes/customize/class-customize.php
+
+
+## 2.2.1
+
+* **Fix**: Blog page excerpt display
+
+### Files changed:
+
+	changelog.md
+	index.php
+	style.css
+
+
+## 2.2.0
+
+* **Add**: Masonry posts layout option
+* **Update**: Library 2.7.0
+* **Update**: CSS Starter 4.0.2
+* **Update**: Removing archive title options in favor of plugin
+* **Update**: Improving NS Featured Posts plugin compatibility
+* **Update**: Improving post meta display
+* **Update**: Improving stylesheets loading
+* **Update**: Localization
+* **Fix**: All Envato Theme Check plugin test requirements
+* **Fix**: Jetpack Author Bio display
+* **Fix**: Intro image width on mobile devices
+* **Fix**: "Back to top" button accessibility
+
+### Files changed:
+
+	changelog.md
+	style.css
+	assets/js/scripts-global.js
+	assets/js/scripts-masonry.js
+	assets/js/scripts-slick.js
+	assets/scss/editor-style.scss
+	assets/scss/main.scss
+	assets/scss/starter/*.*
+	includes/customize/class-customize-styles.php
+	includes/customize/class-customize.php
+	includes/frontend/class-assets.php
+	includes/frontend/class-header.php
+	includes/frontend/class-loop.php
+	includes/frontend/class-menu.php
+	includes/frontend/class-post.php
+	includes/plugins/jetpack/class-jetpack-content-options.php
+	includes/plugins/jetpack/class-jetpack-custom-post-types.php
+	includes/plugins/jetpack/class-jetpack-setup.php
+	includes/plugins/ns-featured-posts/class-ns-featured-posts.php
+	includes/welcome/welcome.php
+	languages/modern.pot
+	library/*.*
+	template-parts/footer/site-info.php
+	template-parts/intro/intro-content.php
+	template-parts/loop/loop-front-blog.php
+	template-parts/loop/loop-front-portfolio.php
+	template-parts/loop/loop-front-testimonials.php
+	template-parts/menu/menu-primary.php
+
+
 ## 2.1.0
 
 * **Add**: Adding intro background color option description

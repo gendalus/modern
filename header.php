@@ -39,6 +39,7 @@
 	do_action( 'tha_head_bottom' );
 
 	wp_head();
+	<link href="https://micro.blog/gendalus" rel="me" />
 
 ?>
 
